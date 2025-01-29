@@ -1,6 +1,6 @@
 # Lille norske språkmodell
 
-This is my attempt to implement a Generative Pretrained Transformer in Python, solely using PyTorch.
+This is my attempt to implement a fully functional Generative Pretrained Transformer (GPT) model from scratch in Python using PyTorch. It's trained on publically available Norwegian corpuses.
 
 Project structure:
 - [data](data): Parsing text and creating datasets to train on
