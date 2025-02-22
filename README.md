@@ -2,6 +2,17 @@
 
 This is my attempt to implement a fully functional Generative Pretrained Transformer (GPT) model from scratch in Python using PyTorch. It's trained on publically available Norwegian corpuses.
 
+Example usage:
+
+```bash
+python examples/shakespeare/train.py
+```
+
+```bash
+python examples/shakespeare/generate.py --prompt "HAMLET:" --temperature 0.9 --max_tokens 300
+```
+
+
 Project structure:
 - [data](data): Parsing text and creating datasets to train on
 - [model](model): Creating the model
