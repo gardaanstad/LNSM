@@ -15,6 +15,10 @@ class TransformerBlock(torch.nn.Module):
         self.dropout = torch.nn.Dropout(dropout)
         
     def forward(self, x, mask=None):
-        x = x + self.dropout(self.attn(self.ln1(x), mask))
+        # Apply attention and residual connection
+        attn_output, _ = self.attn(self.ln1(x), mask)
+        x = x + self.dropout(attn_output)
+        
+        # Apply feed-forward and residual connection
         x = x + self.dropout(self.ffn(self.ln2(x)))
         return x

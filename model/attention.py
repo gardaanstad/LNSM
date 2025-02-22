@@ -17,9 +17,10 @@ class MultiHeadAttention(torch.nn.Module):
         # For causal masking
         self.register_buffer("mask", None, persistent=False)
 
-    def create_causal_mask(self, seq_len):
+    def create_causal_mask(self, seq_len, device):
         """Create upper triangular mask for decoder attention"""
-        return torch.triu(torch.ones(seq_len, seq_len) * float('-inf'), diagonal=1)
+        mask = torch.triu(torch.ones(seq_len, seq_len, device=device) * float('-inf'), diagonal=1)
+        return mask.unsqueeze(0).unsqueeze(0)  # Add batch and head dimensions
 
     def split_heads(self, x):
         """Reshape x to (batch_size, num_heads, seq_len, head_dim)"""
@@ -35,9 +36,9 @@ class MultiHeadAttention(torch.nn.Module):
         # Calculate attention scores
         attn_scores = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(self.head_dim)
         
-        # Apply mask
+        # Apply mask if provided
         if mask is not None:
-            attn_scores = attn_scores + mask
+            attn_scores = attn_scores + mask[:, :, :attn_scores.size(-2), :attn_scores.size(-1)]
         
         # Softmax to get probabilities
         attn_probs = torch.softmax(attn_scores, dim=-1)
@@ -59,12 +60,12 @@ class MultiHeadAttention(torch.nn.Module):
         v = self.split_heads(v)
         
         # Create causal mask if not provided
-        if mask is None and self.mask is None:
-            self.mask = self.create_causal_mask(seq_len).to(x.device)
+        if mask is None:
+            mask = self.create_causal_mask(seq_len, x.device)
         
         # Perform attention
         attn_output, attn_weights = self.scaled_dot_product_attention(
-            q, k, v, mask=self.mask
+            q, k, v, mask=mask
         )
         
         # Combine heads
