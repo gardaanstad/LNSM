@@ -1,6 +1,6 @@
 # Lille norske språkmodell
 
-This is my attempt to implement a fully functional Generative Pretrained Transformer (GPT) model from scratch in Python using PyTorch.
+A fully functional Generative Pretrained Transformer (GPT) model, made from scratch in Python using PyTorch.
 
 Example usage:
 
